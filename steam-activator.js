@@ -19,6 +19,7 @@ function checkPage(s) {
     let errorDisplay = document.getElementById('error_display')
     let receiptForm = document.getElementById('receipt_form')
     let registerForm = document.getElementById('registerkey_form')
+    var waitPeriod = 500 //default wait time between check (ms)
 
     if (!isHidden(receiptForm)) {
         s.wait = false
@@ -28,8 +29,12 @@ function checkPage(s) {
     } else if (!isHidden(registerForm)) {
         if (s.wait && !isHidden(errorDisplay)) {
             s.wait = false
-            console.log(errorDisplay.textContent)
+            console.log(errorDisplay.textContent)                
             errorDisplay.style.display = "none" // hide before activating next key (or else we won't wait properly for receipt_form to appear)
+            if (errorDisplay.textContent.includes(" many ")){
+                waitPeriod = 1000 * 60 * 30
+                s.index--
+            }
         }
         if (!s.wait) {
             if (s.index === s.keys.length) return
@@ -38,7 +43,7 @@ function checkPage(s) {
         }
     }
 
-    setTimeout(function () { checkPage(s) }, 500)
+    setTimeout(function () { checkPage(s) }, waitPeriod)
 }
 
 checkPage({
